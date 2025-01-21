@@ -22,7 +22,7 @@ resources:
   ueransim-image:
     type: oci-image
     description: OCI image for ueransim
-    upstream-source: ghcr.io/gruyaume/ueransim:3.2.6+git
+    upstream-source: ghcr.io/gruyaume/ueransim:3.2.6
 
 storage:
   config:
