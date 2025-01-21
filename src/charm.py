@@ -160,7 +160,7 @@ class UERANSIMCharm(CharmBase):
         desired_gnb_config_file = self._render_gnb_config_file(
             amf_ngap_ip=self._n2_requirer.amf_ip_address,
             amf_ngap_port=self._n2_requirer.amf_port,
-            n2_ip_address="127.0.0.1",
+            n2_ip_address="0.0.0.0",
             n3_ip_address=n3_ip_address.split("/")[0],
             plmn=plmns[0],
             tac=tac,
@@ -324,7 +324,7 @@ class UERANSIMCharm(CharmBase):
             str: Rendered ueransim configuration file
         """
         jinja2_env = Environment(loader=FileSystemLoader("src/templates"))
-        template = jinja2_env.get_template("config.yaml.j2")
+        template = jinja2_env.get_template("gnb.yaml.j2")
         return template.render(
             amf_ngap_ip=amf_ngap_ip,
             amf_ngap_port=amf_ngap_port,
