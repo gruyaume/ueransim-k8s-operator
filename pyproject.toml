@@ -63,4 +63,5 @@ per-file-ignores = {"tests/*" = ["D100","D101","D102","D103","D104"]}
 max-complexity = 10
 
 [tool.codespell]
-skip = "build,lib,venv,icon.svg,.tox,.git,.ruff_cache,.coverage"
+skip = "build,lib,venv,icon.svg,.tox,.git,.ruff_cache,.coverage,pyproject.toml"
+ignore-words-list = ["ue"]
