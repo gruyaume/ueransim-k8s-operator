@@ -255,7 +255,7 @@ class UERANSIMCharm(CharmBase):
             restart (bool): Whether to restart the service.
         """
         plan = self._container.get_plan()
-        if self._gnb_service_name not in plan.services:
+        if self._ue_service_name not in plan.services:
             self._container.add_layer(self._container_name, self._ue_pebble_layer, combine=True)
             self._container.replan()
             logger.info("New layer added: %s", self._ue_pebble_layer)
