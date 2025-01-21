@@ -32,7 +32,7 @@ async def deploy(ops_test: OpsTest, request):
     assert ops_test.model
     charm = Path(request.config.getoption("--charm_path")).resolve()
     resources = {
-        "gnbsim-image": METADATA["resources"]["gnbsim-image"]["upstream-source"],
+        "ueransim-image": METADATA["resources"]["ueransim-image"]["upstream-source"],
     }
     await ops_test.model.deploy(
         charm,
