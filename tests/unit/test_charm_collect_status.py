@@ -15,12 +15,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     @pytest.mark.parametrize(
         "config_param",
         [
-            ("usim-opc"),
             ("gnb-ip-address"),
-            ("icmp-packet-destination"),
-            ("imsi"),
-            ("usim-key"),
-            ("usim-sequence-number"),
             ("upf-subnet"),
             ("upf-gateway"),
         ],
@@ -130,7 +125,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     ):
         self.mock_k8s_multus.multus_is_available.return_value = True
         self.mock_k8s_multus.is_ready.return_value = True
-        self.mock_n2_requirer_amf_hostname.return_value = None
+        self.mock_n2_requirer_amf_ip_address.return_value = None
         self.mock_n2_requirer_amf_port.return_value = None
         n2_relation = testing.Relation(endpoint="fiveg-n2", interface="fiveg_n2")
         core_gnb_relation = testing.Relation(
@@ -159,7 +154,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     ):
         self.mock_k8s_multus.multus_is_available.return_value = True
         self.mock_k8s_multus.is_ready.return_value = True
-        self.mock_n2_requirer_amf_hostname.return_value = "amf"
+        self.mock_n2_requirer_amf_ip_address.return_value = "amf"
         self.mock_n2_requirer_amf_port.return_value = 1234
         self.mock_gnb_core_remote_tac.return_value = 2
         self.mock_gnb_core_remote_plmns.return_value = [PLMNConfig(mcc="001", mnc="01", sst=1)]
@@ -195,7 +190,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     ):
         self.mock_k8s_multus.multus_is_available.return_value = True
         self.mock_k8s_multus.is_ready.return_value = True
-        self.mock_n2_requirer_amf_hostname.return_value = "amf"
+        self.mock_n2_requirer_amf_ip_address.return_value = "amf"
         self.mock_n2_requirer_amf_port.return_value = 1234
         self.mock_gnb_core_remote_tac.return_value = tac
         self.mock_gnb_core_remote_plmns.return_value = plmns
@@ -226,7 +221,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     ):
         self.mock_k8s_multus.multus_is_available.return_value = True
         self.mock_k8s_multus.is_ready.return_value = True
-        self.mock_n2_requirer_amf_hostname.return_value = "amf"
+        self.mock_n2_requirer_amf_ip_address.return_value = "amf"
         self.mock_n2_requirer_amf_port.return_value = 1234
         self.mock_gnb_core_remote_tac.return_value = 45
         self.mock_gnb_core_remote_plmns.return_value = [PLMNConfig(mcc="001", mnc="01", sst=1)]
@@ -257,7 +252,7 @@ class TestCharmCollectUnitStatus(GNBSUMUnitTestFixtures):
     def test_pre_requisites_met_when_collect_unit_status_then_status_is_active(self):
         self.mock_k8s_multus.multus_is_available.return_value = True
         self.mock_k8s_multus.is_ready.return_value = True
-        self.mock_n2_requirer_amf_hostname.return_value = "amf"
+        self.mock_n2_requirer_amf_ip_address.return_value = "amf"
         self.mock_n2_requirer_amf_port.return_value = 1234
         self.mock_gnb_core_remote_tac.return_value = 2
         plmns = [PLMNConfig(mcc="001", mnc="01", sst=1, sd=3)]
