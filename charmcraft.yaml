@@ -82,12 +82,19 @@ config:
       type: string
       default: "192.168.251.1"
       description: Gateway to use to reach the UPF subnet
-
-actions:
-  start-simulation:
-    description: Starts gNB simulation
-    params:
-      timeout:
-        type: integer
-        description: Time to wait for the simulation to complete (in seconds). The more subscribers, the longer the simulation will take.
-        default: 300
+    imsi:
+      type: string
+      default: "001010100007487"
+      description: International Mobile Subscriber Identity. If the subscriber count is greater than 1, the imsi will be incremented by 1 for each subscriber.
+    usim-key:
+      type: string
+      default: "5122250214c33e723a5dd523fc145fc0"
+      description: USIM Key
+    usim-opc:
+      type: string
+      default: "981d464c7c52eb6e5036234984ad0bcf"
+      description: USIM Operator Key
+    dnn:
+      type: string
+      default: "internet"
+      description: Data Network Name

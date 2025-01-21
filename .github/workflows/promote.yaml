@@ -16,7 +16,6 @@ on:
         options:
           - latest
 
-
 jobs:
   promote:
     name: Promote Charm
