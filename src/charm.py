@@ -25,7 +25,6 @@ from lightkube.models.meta_v1 import ObjectMeta
 from ops import ActiveStatus, BlockedStatus, CollectStatusEvent, WaitingStatus, main
 from ops.charm import CharmBase
 from ops.framework import EventBase
-from ops.pebble import Layer
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +44,6 @@ class UERANSIMCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
         self._container_name = "ueransim"
-        self._gnb_service_name = "gnb"
-        self._ue_service_name = "ue"
         self._container = self.unit.get_container(self._container_name)
         self._n2_requirer = N2Requires(self, N2_RELATION_NAME)
         self._service_patcher = KubernetesServicePatch(
@@ -171,9 +168,8 @@ class UERANSIMCharm(CharmBase):
             tac=tac,
         )
 
-        if restart_gnb := self._is_gnb_config_update_required(desired_gnb_config_file):
+        if self._is_gnb_config_update_required(desired_gnb_config_file):
             self._write_gnb_config_file(content=desired_gnb_config_file)
-        self._configure_gnb_pebble_service(restart=restart_gnb)
 
     def _configure_ue(self):
         if not (imsi := self._get_imsi_from_config()):
@@ -186,9 +182,7 @@ class UERANSIMCharm(CharmBase):
             return
         if not self._is_sd_present_in_plmn(plmns[0]):
             return
-        gnb_service = self._container.get_service(self._gnb_service_name)
-        if not gnb_service:
-            return
+
         desired_ue_config_file = self._render_ue_config_file(
             mcc=plmns[0].mcc,
             mnc=plmns[0].mnc,
@@ -197,9 +191,8 @@ class UERANSIMCharm(CharmBase):
             opc=opc,
         )
 
-        if restart_ue := self._is_ue_config_update_required(desired_ue_config_file):
+        if self._is_ue_config_update_required(desired_ue_config_file):
             self._write_ue_config_file(content=desired_ue_config_file)
-        self._configure_ue_pebble_service(restart=restart_ue)
 
     def _is_gnb_config_update_required(self, content: str) -> bool:
         if not self._gnb_config_file_is_written() or not self._gnb_config_file_content_matches(
@@ -230,78 +223,6 @@ class UERANSIMCharm(CharmBase):
         if existing_content.read() != content:
             return False
         return True
-
-    def _configure_gnb_pebble_service(self, restart=False) -> None:
-        """Configure the Pebble layer for the gnb service.
-
-        Args:
-            restart (bool): Whether to restart the service.
-        """
-        plan = self._container.get_plan()
-        if self._gnb_service_name not in plan.services:
-            self._container.add_layer(self._container_name, self._gnb_pebble_layer, combine=True)
-            self._container.replan()
-            logger.info("New layer added: %s", self._gnb_pebble_layer)
-        if restart:
-            self._container.restart(self._gnb_service_name)
-            logger.info("Restarted container %s", self._gnb_service_name)
-            return
-        self._container.replan()
-
-    def _configure_ue_pebble_service(self, restart=False) -> None:
-        """Configure the Pebble layer for the ue service.
-
-        Args:
-            restart (bool): Whether to restart the service.
-        """
-        plan = self._container.get_plan()
-        if self._ue_service_name not in plan.services:
-            self._container.add_layer(self._container_name, self._ue_pebble_layer, combine=True)
-            self._container.replan()
-            logger.info("New layer added: %s", self._ue_pebble_layer)
-        if restart:
-            self._container.restart(self._ue_service_name)
-            logger.info("Restarted container %s", self._ue_service_name)
-            return
-        self._container.replan()
-
-    @property
-    def _gnb_pebble_layer(self) -> Layer:
-        """Return pebble layer for the gnb service.
-
-        Returns:
-            Layer: Pebble Layer
-        """
-        return Layer(
-            {
-                "services": {
-                    self._gnb_service_name: {
-                        "override": "replace",
-                        "startup": "enabled",
-                        "command": f"/usr/bin/nr-gnb -c {BASE_CONFIG_PATH}/{GNB_CONFIG_FILE_NAME}",
-                    },
-                },
-            }
-        )
-
-    @property
-    def _ue_pebble_layer(self) -> Layer:
-        """Return pebble layer for the ue service.
-
-        Returns:
-            Layer: Pebble Layer
-        """
-        return Layer(
-            {
-                "services": {
-                    self._ue_service_name: {
-                        "override": "merge",
-                        "startup": "enabled",
-                        "command": f"/usr/bin/nr-ue -c {BASE_CONFIG_PATH}/{UE_CONFIG_FILE_NAME}",
-                    },
-                },
-            }
-        )
 
     def _is_sd_present_in_plmn(self, plmn) -> bool:
         return plmn.sd is not None
