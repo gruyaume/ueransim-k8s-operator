@@ -1,4 +1,4 @@
-# Copyright 2024 Canonical Ltd.
+# Copyright 2024 Guillaume Belanger
 # See LICENSE file for licensing details.
 
 from unittest.mock import PropertyMock, patch
