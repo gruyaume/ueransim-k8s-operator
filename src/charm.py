@@ -44,8 +44,6 @@ class UERANSIMCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
         self._container_name = "ueransim"
-        self._gnb_service_name = "gnb"
-        self._ue_service_name = "ue"
         self._container = self.unit.get_container(self._container_name)
         self._n2_requirer = N2Requires(self, N2_RELATION_NAME)
         self._service_patcher = KubernetesServicePatch(
@@ -184,9 +182,7 @@ class UERANSIMCharm(CharmBase):
             return
         if not self._is_sd_present_in_plmn(plmns[0]):
             return
-        gnb_service = self._container.get_service(self._gnb_service_name)
-        if not gnb_service:
-            return
+
         desired_ue_config_file = self._render_ue_config_file(
             mcc=plmns[0].mcc,
             mnc=plmns[0].mnc,
